@@ -30,7 +30,7 @@ export default class GameManager extends cc.Component {
            
     this.TestBallList.push(this.CurrentBall);
     // this.CurrentBall.node.position = cc.v3(-200+400*Math.random(),-300 + 600*Math.random());
-    this.CurrentBall.node.position = cc.v3(0,-200)
+    this.CurrentBall.node.position = cc.v3(-5,-390)
     // this.CurrentBall.Shoot(cc.v3(-200+400*Math.random(),-300 + 600*Math.random()));
     this.CurrentBall.SetState(this.RandomColor());
 

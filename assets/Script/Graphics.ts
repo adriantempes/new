@@ -13,13 +13,19 @@ isCanTouch: boolean = true;
 @property(cc.Node)
 TouchNode : cc.Node = null;
 
+radius : number = 335;
+diameter : number = 670;
+high : number;
+
     start () {
         this.LineControl();
-      
+ 
         
     }
+ 
     protected onLoad(): void {
         this.TouchNode.on(cc.Node.EventType.TOUCH_START, (event) => { 
+            
     
             this.isCanTouch = true;
 
@@ -28,12 +34,43 @@ TouchNode : cc.Node = null;
       
             
             let mouse_pos = this.node.convertToNodeSpaceAR(event.getLocation()); //toa do tro chuot
+            this.high = this.radius*mouse_pos.y/mouse_pos.x;
            
             console.log(mouse_pos.x,mouse_pos.y)
             this.Drawing.clear();
             // this.Drawing.clear();
-            this.Drawing.moveTo(0,200)
-            this.Drawing.lineTo(mouse_pos.x,mouse_pos.y);
+            this.Drawing.moveTo(0,0)
+            if(mouse_pos.x > 0 && mouse_pos.y > 0){
+            this.Drawing.lineTo(this.radius,(mouse_pos.y*this.radius/mouse_pos.x));
+            this.Drawing.moveTo(this.radius,this.radius*mouse_pos.y/mouse_pos.x)
+            this.Drawing.lineTo(-this.radius,this.diameter*mouse_pos.y/mouse_pos.x)
+            this.Drawing.stroke();
+            this.Drawing.fill();
+        
+            this.Drawing.moveTo(-this.radius,this.diameter*mouse_pos.y/mouse_pos.x)
+            this.Drawing.lineTo(this.radius,2*this.diameter*mouse_pos.y/mouse_pos.x)
+            this.Drawing.stroke();
+            this.Drawing.fill();
+            GameManager.instance.CurrentBall.Shoot(cc.v3(this.radius,this.high))
+            
+            
+
+            
+            }
+            if(mouse_pos.x < 0 && mouse_pos.y > 0){
+                
+                this.Drawing.lineTo(-this.radius,(mouse_pos.y*this.radius/Math.abs(mouse_pos.x)));
+                this.Drawing.moveTo(-this.radius,this.radius*mouse_pos.y/Math.abs(mouse_pos.x))
+                this.Drawing.lineTo(this.radius,this.diameter*mouse_pos.y/Math.abs(mouse_pos.x))
+                this.Drawing.stroke();
+                this.Drawing.fill();
+            
+                this.Drawing.moveTo(this.radius,this.diameter*mouse_pos.y/Math.abs(mouse_pos.x))
+                this.Drawing.lineTo(-this.radius,this.diameter*2*mouse_pos.y/Math.abs(mouse_pos.x) )
+                this.Drawing.stroke();
+                this.Drawing.fill();
+            }
+           
             
             this.Drawing.lineWidth = 6;
       
@@ -43,11 +80,12 @@ TouchNode : cc.Node = null;
             
             this.Drawing.stroke();
             this.Drawing.fill();
-        GameManager.instance.CurrentBall.Shoot(cc.v3(mouse_pos.x,mouse_pos.y))
-        if(BallScript.instance.IsShooting == true){
-            GameManager.instance.SpawnBall();
-        }
+            cc.tween(GameManager.instance.CurrentBall)
+            .call(()=> { BallScript.instance.Shoot(cc.v3(this.radius,this.high))})
+            .start
+       
 
+        
             
         
 
@@ -56,16 +94,46 @@ TouchNode : cc.Node = null;
 
          this.TouchNode.on(cc.Node.EventType.TOUCH_MOVE, (event) => { 
             this.isCanTouch = true;
+            
 
      
             if (!this.isCanTouch) return;
             
-            let mouse_pos = this.node.convertToNodeSpaceAR(event.getLocation()); //toa do tro chuot
+            let mouse_pos = this.node.convertToNodeSpaceAR(event.getLocation()); 
             console.log(mouse_pos.x,mouse_pos.y)
             this.Drawing.clear();
 
-            this.Drawing.moveTo(0,200)
-            this.Drawing.lineTo(mouse_pos.x,mouse_pos.y);
+            this.Drawing.moveTo(0,0)
+            if(mouse_pos.x > 0 && mouse_pos.y > 0){
+            this.Drawing.lineTo(this.radius,(mouse_pos.y*this.radius/mouse_pos.x));
+            this.Drawing.moveTo(this.radius,this.radius*mouse_pos.y/mouse_pos.x)
+            this.Drawing.lineTo(-this.radius,this.diameter*mouse_pos.y/mouse_pos.x)
+            this.Drawing.stroke();
+            this.Drawing.fill();
+        
+            this.Drawing.moveTo(-this.radius,this.diameter*mouse_pos.y/mouse_pos.x)
+            this.Drawing.lineTo(this.radius,2*this.diameter*mouse_pos.y/mouse_pos.x)
+            this.Drawing.stroke();
+            this.Drawing.fill();
+        
+            }
+            if(mouse_pos.x < 0 && mouse_pos.y > 0){
+                
+                this.Drawing.lineTo(-this.radius,(mouse_pos.y*this.radius/Math.abs(mouse_pos.x)));
+                this.Drawing.moveTo(-this.radius,this.radius*mouse_pos.y/Math.abs(mouse_pos.x))
+                this.Drawing.lineTo(this.radius,this.diameter*mouse_pos.y/Math.abs(mouse_pos.x))
+                this.Drawing.stroke();
+                this.Drawing.fill();
+            
+                this.Drawing.moveTo(this.radius,this.diameter*mouse_pos.y/Math.abs(mouse_pos.x))
+                this.Drawing.lineTo(-this.radius,this.diameter*2*mouse_pos.y/Math.abs(mouse_pos.x) )
+                this.Drawing.stroke();
+                this.Drawing.fill();
+                // GameManager.instance.CurrentBall.Shoot(cc.v3(-this.radius,this.high )),this.TurnRight(1)
+                    
+                }
+            
+     
             
             this.Drawing.lineWidth = 6;
       
@@ -83,37 +151,38 @@ TouchNode : cc.Node = null;
             this.isCanTouch = true;
 
      
-            if (!this.isCanTouch) return;
+     
+            GameManager.instance.SpawnBall();
 
-            let mouse_pos = this.node.convertToNodeSpaceAR(event.getLocation())
-            GameManager.instance.AnotherBall.Shoot(cc.v3(mouse_pos.x,mouse_pos.y))
 
         }, this);
     }
 
   LineControl(){
-        //    this.Drawing = this.node.getComponent(cc.Graphics);
-    this.Drawing.lineWidth = 6;
-    this.Drawing.moveTo(0, 200);
-    this.Drawing.lineTo(0, 600);
-    // if(GameManager.instance.AnotherBall.BallSprite.spriteFrame == ColorEnum[ColorEnum[0]] ){
-    this.Drawing.strokeColor = cc.Color.RED;
-    
-    // if(GameManager.instance.AnotherBall == ColorEnum[ColorEnum[1]] ){
-    //     this.Drawing.strokeColor = cc.Color.GREEN;
-    // }
-    // if(GameManager.instance.AnotherBall == ColorEnum[ColorEnum[2]] ){
-    //     this.Drawing.strokeColor = cc.Color.ORANGE;
-    // }
-    // if(GameManager.instance.AnotherBall == ColorEnum[ColorEnum[3]] ){
-    //     this.Drawing.strokeColor = cc.Color.RED;
-    // }
-    // if(GameManager.instance.AnotherBall == ColorEnum[ColorEnum[4]] ){
-    //     this.Drawing.strokeColor = cc.Color.YELLOW;
-    // }
-    
-    // this.Drawing.strokeColor = cc.Color.RED;
-    this.Drawing.stroke();
-  }
    
+  }
+  TurnLeft(n:number){
+    
+        this.node.on('mousedown', function ( event ) {
+            let mouse_pos = this.node.convertToNodeSpaceAR(event.getLocation());
+            this.high = this.radius*mouse_pos.y/mouse_pos.x;
+            GameManager.instance.CurrentBall.Shoot(cc.v3(this.radius,2*this.high + n*4*this.high))
+            if(GameManager.instance.CurrentBall.node.position.x < -this.radius){
+                this.TurnRight(1);
+            console.log( " 123123" + this.high)
+            }
+        })
+     
+  }
+  TurnRight(m:number){
+    this.node.on('mousedown', function ( event ) {
+        let mouse_pos = this.node.convertToNodeSpaceAR(event.getLocation());
+        this.high = this.radius*mouse_pos.y/mouse_pos.x;
+        GameManager.instance.CurrentBall.Shoot(cc.v3(-this.radius,2*this.high + m*4*this.high))
+        if(GameManager.instance.CurrentBall.node.position.x < -this.radius){
+            this.TurnLeft(1);
+        }
+    })
+  }
 }
+
